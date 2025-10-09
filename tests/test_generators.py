@@ -117,3 +117,4 @@ def test_filter_by_currency (pytest_transact_1):
             }
         ]
 
+
