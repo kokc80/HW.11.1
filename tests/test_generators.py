@@ -1,10 +1,15 @@
-import pytest
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
 from src.generators import *
 
+import pytest
+
+
 pytest.fixture
-def pytest_transact_1():
-    pytest_trans_1=[(
+def fix_transact_1():
+    fix_transact_1=[(
         [
             {
                 "id": 939719570,
@@ -76,11 +81,11 @@ def pytest_transact_1():
             }
         ]
     )]
-    return(pytest_trans_1)
+    return(fix_transact_1)
 
 
-def test_filter_by_currency (pytest_transact_1):
-    assert filter_by_currency(pytest_transact_1,"USD") == [
+def test_filter_by_currency ():
+    assert filter_by_currency(fix_transact_1,"USD") == [(
             {
                 "id": 939719570,
                 "state": "EXECUTED",
@@ -115,6 +120,6 @@ def test_filter_by_currency (pytest_transact_1):
                 "from": "Счет 19708645243227258542",
                 "to": "Счет 75651667383060284188"
             }
-        ]
+            )]
 
 
