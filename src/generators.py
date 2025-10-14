@@ -97,6 +97,7 @@ def transaction_descriptions(transact_1: list):
 def card_number_generator(num_1: int, num_2: int):
     """Генератор генерирует номера карт"""
     for num in range(num_1, num_2 + 1):
-        yield "{:04d} {:04d} {:04d} {:04d}".format(
-            num // 10**12, (num // 10**8) % 10**4, (num // 10**4) % 10**4, num % 10**4
-        )
+        yield ("{:04d} {:04d} {:04d} {:04d}".
+               format(num // 10**12,
+                      (num // 10**8) % 10**4, (num // 10**4) % 10**4,
+                      num % 10**4))

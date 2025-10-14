@@ -1,12 +1,13 @@
 import os
 import sys
 
+import pytest
+
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 )
-import pytest
 
-# from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
+
 from src.generators import *
 
 
@@ -94,14 +95,14 @@ def test_filter_by_currency(fix_transact_1):
             "to": "Счет 75651667383060284188",
         },
     ]
-    result = filter_by_currency(fix_transact_1, "USD")
-    assert list(result) == expected_result
+    result_filter_1 = filter_by_currency(fix_transact_1, "USD")
+    assert list(result_filter_1) == expected_result
 
 
 def test_filter_by_currency_none(fix_transact_1):
     expected_result = []
-    result = filter_by_currency(fix_transact_1, "АКФ")
-    assert list(result) == expected_result
+    result_filter_2 = filter_by_currency(fix_transact_1, "АКФ")
+    assert list(result_filter_2) == expected_result
 
 
 def test_card_number_generator():
@@ -117,6 +118,17 @@ def test_card_number_generator():
     ]
     result_card = card_number_generator(100001, 100008)
     assert list(result_card) == expected_result
+
+
+@pytest.mark.parametrize("data_list,expected_result", [
+    (1, 2), ("0000 0000 0000 0001", "0000 0000 0010 0002"),
+    (3, 5), ("0000 0000 0000 0003", "0000 0000 0010 0004", "0000 0000 0010 0005"),
+    (6, 8), ("0000 0000 0000 0006", "0000 0000 0010 0007", "0000 0000 0010 0008")],
+)
+
+
+def pytest_list_sorted_p(data_list, expected_result):
+    assert sort_by_date == expected_result
 
 
 def test_transaction_descriptions(fix_transact_1):
