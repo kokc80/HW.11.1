@@ -76,21 +76,20 @@ def filter_by_currency(transact: list, currency: str):
     """принимает на вход список словарей, представляющих транзакции.
     Функция должна возвращать итератор, который поочередно выдает транзакции,
     где валюта операции соответствует заданной (например, USD)."""
-    if not transact:
-        return "Операций с такой валютой нет."
-    else:
-        for trans in transact:
+    for trans in transact:
+        try:
             if trans["operationAmount"]["currency"]["name"] == currency:
-                yield trans #итерация
-
+                yield trans
+        except KeyError:
+            continue  # пропускаем некорректные транзакции
 
 def transaction_descriptions(transact_1: list):
     """генератор принимает список словарей с транзакциями и возвращает описание каждой операции по очереди."""
-    if not transact_1:
-        return "Транзакций нет"
-    else:
-        for trans_1 in transact_1:
+    for trans_1 in transact_1:
+        try:
             yield trans_1["description"]
+        except KeyError:
+            pass  # пропускаем транзакции без описания
 
 
 def card_number_generator(num_1: int, num_2: int):
