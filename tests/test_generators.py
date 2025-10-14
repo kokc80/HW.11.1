@@ -121,7 +121,7 @@ def test_filter_by_currency ():
                 "to": "Счет 75651667383060284188"
             }
             )]
-    result =  list(filter_by_currency(fix_transact_1,"USD"))
+    result =  list[(filter_by_currency(fix_transact_1,"USD"))]
     assert result == excepted result
 
 
