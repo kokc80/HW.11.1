@@ -84,12 +84,6 @@ def filter_by_currency(transact: list, currency: str):
                 yield trans #итерация
 
 
-# #пример из условий задачи
-# usd_transactions = filter_by_currency(trans_list, "USD")
-# for _ in range(2):
-#     print(next(usd_transactions))
-
-
 def transaction_descriptions(transact_1: list):
     """генератор принимает список словарей с транзакциями и возвращает описание каждой операции по очереди."""
     if not transact_1:
@@ -99,17 +93,7 @@ def transaction_descriptions(transact_1: list):
             yield trans_1["description"]
 
 
-# #пример из условий задачи
-# descriptions = transaction_descriptions(trans_list)
-# for _ in range(3):
-#     print(next(descriptions))
-
-
 def card_number_generator(num_1: int, num_2: int):
     """Генератор генерирует номера карт"""
     for num in range(num_1,num_2+1):
         yield '{:04d} {:04d} {:04d} {:04d}'.format(num // 10**12, (num // 10**8) % 10**4, (num // 10**4) % 10**4, num % 10**4)
-
-# #пример из условий задачи
-# for card_number in card_number_generator(100001, 100009):
-#     print(card_number)

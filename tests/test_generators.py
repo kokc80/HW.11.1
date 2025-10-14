@@ -6,7 +6,6 @@ import pytest
 from src.generators import *
 
 
-
 @pytest.fixture
 def fix_transact_1():
     return [
@@ -90,6 +89,18 @@ def test_filter_by_currency (fix_transact_1):
                     {"amount": "79114.93","currency":{"name": "USD","code": "USD"}},"description": "Перевод со счета на счет",
                      "from": "Счет 19708645243227258542","to": "Счет 75651667383060284188"}]
     result = filter_by_currency(fix_transact_1,"USD")
-
     assert list(result) == excepted_result
+
+
+def test_card_number_generator():
+    excepted_result = ["0000 0000 0010 0001", "0000 0000 0010 0002", "0000 0000 0010 0003", "0000 0000 0010 0004",
+                       "0000 0000 0010 0005", "0000 0000 0010 0006", "0000 0000 0010 0007", "0000 0000 0010 0008"]
+    result_card = card_number_generator(100001, 100008)
+    assert list(result_card) == excepted_result
+
+
+def test_transaction_descriptions (fix_transact_1):
+    excepted_result = ["Перевод организации", "Перевод со счета на счет", "Перевод со счета на счет","Перевод со счета на счет"]
+    result_descr = transaction_descriptions (fix_transact_1)
+    assert list(result_descr) == excepted_result
 
