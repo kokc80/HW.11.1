@@ -1,10 +1,10 @@
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+import pytest
 
 from src.generators import *
 
-import pytest
 
 
 pytest.fixture
@@ -81,11 +81,11 @@ def fix_transact_1():
             }
         ]
     )]
-    return(fix_transact_1)
+#    return(fix_transact_1)
 
 
 def test_filter_by_currency ():
-    assert filter_by_currency(fix_transact_1,"USD") == [(
+    excepted_result=[(
             {
                 "id": 939719570,
                 "state": "EXECUTED",
@@ -121,5 +121,7 @@ def test_filter_by_currency ():
                 "to": "Счет 75651667383060284188"
             }
             )]
+    result =  list(filter_by_currency(fix_transact_1,"USD"))
+    assert result == excepted result
 
 
