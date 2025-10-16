@@ -128,7 +128,7 @@ def test_card_number_generator():
 
 
 def pytest_list_sorted_p(data_list, expected_result):
-    assert sort_by_date == expected_result
+    assert sort_by_date(fix_transact_1) == expected_result
 
 
 def test_transaction_descriptions(fix_transact_1):
