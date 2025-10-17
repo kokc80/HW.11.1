@@ -3,12 +3,9 @@ import sys
 
 import pytest
 
-sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-)
-
-
 from src.generators import *
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 
 @pytest.fixture
@@ -120,13 +117,17 @@ def test_card_number_generator():
     assert list(result_card) == expected_result
 
 
-@pytest.mark.parametrize("data_list,expected_result", [
-    (1, 2), ("0000 0000 0000 0001", "0000 0000 0010 0002"),
-    (3, 5), ("0000 0000 0000 0003", "0000 0000 0010 0004", "0000 0000 0010 0005"),
-    (6, 8), ("0000 0000 0000 0006", "0000 0000 0010 0007", "0000 0000 0010 0008")],
+@pytest.mark.parametrize(
+    "data_list,expected_result",
+    [
+        (1, 2),
+        ("0000 0000 0000 0001", "0000 0000 0010 0002"),
+        (3, 5),
+        ("0000 0000 0000 0003", "0000 0000 0010 0004", "0000 0000 0010 0005"),
+        (6, 8),
+        ("0000 0000 0000 0006", "0000 0000 0010 0007", "0000 0000 0010 0008"),
+    ],
 )
-
-
 def pytest_list_sorted_p(data_list, expected_result):
     assert sort_by_date(fix_transact_1) == expected_result
 
