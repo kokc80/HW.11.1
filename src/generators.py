@@ -1,4 +1,4 @@
-def filter_by_currency(transact: list, currency: str): -> List
+def filter_by_currency(transact: list, currency: str):
     """принимает на вход список словарей, представляющих транзакции.
     Функция должна возвращать итератор, который поочередно выдает транзакции,
     где валюта операции соответствует заданной (например, USD)."""
@@ -10,7 +10,7 @@ def filter_by_currency(transact: list, currency: str): -> List
             continue  # пропускаем некорректные транзакции
 
 
-def transaction_descriptions(transact_1: list): -> List
+def transaction_descriptions(transact_1: list):
     """генератор принимает список словарей с транзакциями и возвращает описание
     каждой операции по очереди."""
     for trans_1 in transact_1:
@@ -20,7 +20,7 @@ def transaction_descriptions(transact_1: list): -> List
             pass  # пропускаем транзакции без описания
 
 
-def card_number_generator(num_1: int, num_2: int): -> List
+def card_number_generator(num_1: int, num_2: int):
     """Генератор генерирует номера карт"""
     for num in range(num_1, num_2 + 1):
         yield ("{:04d} {:04d} {:04d} {:04d}".
