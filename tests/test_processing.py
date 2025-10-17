@@ -12,14 +12,11 @@ def pytest_list_1():
     ]
 
 
-@pytest.fixture
-def test_list_sorted():
-    return [
-        {"date": "2019-07-03T18:35:29.512364", "id": 414288291, "state": "EXECUTED"},
-        {"date": "2018-06-30T02:08:58.425572", "id": 939719570, "state": "EXECUTED"},
-        {"date": "2018-10-14T08:21:33.419441", "id": 615064591, "state": "CANCELED"},
-        {"date": "2018-09-12T21:27:25.241689", "id": 594226727, "state": "CANCELED"}
-    ]
+test_list_sorted = [{'id': 414288291, 'state': 'EXECUTED', 'date': '2019-07-03T18:35:29.512364'},
+                       {'id': 615064591, 'state': 'CANCELED', 'date': '2018-10-14T08:21:33.419441'},
+                       {'id': 594226727, 'state': 'CANCELED', 'date': '2018-09-12T21:27:25.241689'},
+                       {'id': 939719570, 'state': 'EXECUTED', 'date': '2018-06-30T02:08:58.425572'}
+                       ]
 
 
 @pytest.fixture
@@ -69,14 +66,15 @@ pytest_param3 = [
     {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"}
 ]
 
-# посмотреть 10,2
+
 @pytest.mark.parametrize("data_list,expected_result",
-                         (pytest_param1, test_list_sorted),
-                         (pytest_param2, test_list_sorted),([],[]),
+                         [(pytest_param1,test_list_sorted),
+                         (pytest_param2,test_list_sorted),
+                         (pytest_param3,test_list_sorted)]
                         )
 
 
 def test_sort_by_date_2(data_list, expected_result):
-    assert sort_by_date(data_list, True) == expected_result
+    assert list(sort_by_date(data_list, True)) == expected_result
 
 
