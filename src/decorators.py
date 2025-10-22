@@ -9,14 +9,16 @@ def log(filename=None):
             try:
                 start_time = time.time()
                 result = func(*args, **kwargs)
-                log_message = (f'Функция: {func.__name__}\n'
-                               f'Аргументы {args}\n' 
-                               f'Результат: {result}\n'
-                               f'Время выполнения: {time.time() - start_time}\n')
-            except :
-                log_message = f'Error: Ошибка в функции: {func.__name__}. Аргументы: {args}, {kwargs}\n'
+                log_message = (f'''Функция: {func.__name__}
+                               Аргументы {args}
+                               Результат: {resut}
+                               Время выполнения: {time.time() - start_time}''')
+            except Exception as e:
+                error_message = (f'Ошибка в функции: {func.__name__} '
+                                 f'Ошибка: {e}. Аргументы: {args}, {kwargs}')
+                log_message = (f'{error_message}')
             if filename:
-                with open(filename, 'w') as f:
+                with open(filename, 'w', encoding='utf-8') as f:
                     f.write(f'{log_message}\n')
             else:
                 print({log_message})
@@ -24,9 +26,9 @@ def log(filename=None):
     return wrapper
 
 
-@log()
+@log('logs.txt')
 def my_func_div(x, y):
     res_div = x/y
     return (res_div)
 
-my_func_div(20,0)
+my_func_div(20,40)
