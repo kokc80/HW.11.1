@@ -32,6 +32,6 @@ def my_func_div(x, y) -> float:
     return (res_div)
 
 my_func_div(20,0)
-Добавь отчёт в коммит
+
 
 
