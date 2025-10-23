@@ -3,32 +3,35 @@ from functools import wraps
 import time
 
 def log(filename=None):
+    '''Декоратор для логирования поведения функции'''
     def wrapper(func):
         def inner(*args, **kwargs):
             log_message = ''
             try:
                 start_time = time.time()
                 result = func(*args, **kwargs)
-                log_message = (f'''Функция: {func.__name__}
-                               Аргументы {args}
-                               Результат: {resut}
-                               Время выполнения: {time.time() - start_time}''')
+                log_message = (f'Функция: {func.__name__} Результат: {result}')
             except Exception as e:
-                error_message = (f'Ошибка в функции: {func.__name__} '
-                                 f'Ошибка: {e}. Аргументы: {args}, {kwargs}')
+                error_message = (f'Ошибка в функции: {func.__name__} Ошибка: {e}.'
+                                 f' Аргументы: {args}, {kwargs}')
                 log_message = (f'{error_message}')
             if filename:
                 with open(filename, 'w', encoding='utf-8') as f:
-                    f.write(f'{log_message}\n')
+                    f.write(f'{log_message}')
             else:
-                print({log_message})
+                print(log_message)
         return inner
     return wrapper
 
 
-@log('logs.txt')
-def my_func_div(x, y):
+#@log('logs.txt')
+@log()
+def my_func_div(x, y) -> float:
+    '''Функция деления x/y'''
     res_div = x/y
     return (res_div)
 
-my_func_div(20,40)
+my_func_div(20,0)
+Добавь отчёт в коммит
+
+
