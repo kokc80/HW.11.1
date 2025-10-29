@@ -14,7 +14,7 @@ def log(filename=None):
                 error_message = (f'Ошибка в функции: {func.__name__} Ошибка: {e}.'
                                  f' Аргументы: {args}, {kwargs}')
                 log_message = (f'{error_message}')
-                log_message = log_message + start_time
+                log_message = log_message + str(start_time)
             if filename:
                 with open(filename, 'w', encoding='utf-8') as f:
                     f.write(f'{log_message}')
@@ -24,11 +24,11 @@ def log(filename=None):
     return wrapper
 
 
-@log()
+@log('mylog.txt')
 def my_func_div(x, y) -> float:
-    """Функция деления x/y"""
-    res_div = x / y
+    """Функция сложения x+y"""
+    res_div = x + y
     return (res_div)
 
 
-my_func_div(20, 0)
+my_func_div(20, 1)
