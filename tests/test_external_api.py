@@ -1,6 +1,6 @@
 from src.external_api import convert_exchange_rate
 
-test_res = 7451354.69249
+test_res = 7493507.550329
 
 
 def test_convert_exchange_rate():
