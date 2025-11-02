@@ -9,14 +9,12 @@ ROOT_DIR = os.path.dirname(
 )
 transaction_dict=[]
 file_path_data = f"{ROOT_DIR}\\data\\operations.json"
-# print(f"Путь {file_path_data}")
 transaction_dict = read_json(file_path_data)
 
 
 tr_list = transaction_dict[2]
 if tr_list["operationAmount"]["currency"]["code"] == "RUB":
     print("RUB")
-    print(tr_list["operationAmount"]["amount"])
 else:
     print(convert_exchange_rate(tr_list["operationAmount"]["currency"]["code"], "RUB",
                                   float(tr_list["operationAmount"]["amount"]), date_now.strftime("%Y-%m-%d")))
