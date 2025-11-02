@@ -1,6 +1,5 @@
 import os
 import requests
-import datetime
 from dotenv import load_dotenv
 
 # Загрузка переменных из .env-файла
@@ -24,13 +23,3 @@ def convert_exchange_rate(money_from: str, money_to: str, money_amount: float, d
     # status_code = response.status_code
     result = response.json()["result"]
     return result
-
-
-def transactions_amount(trans: list) -> float:
-    """формирование данных для API конвертации с получением данных из API или возврата суммы в рублях"""
-    date_now = datetime.datetime.now()
-    if trans["operationAmount"]["currency"]["code"] == "RUB":
-        return (trans["operationAmount"]["amount"])
-    else:
-        return convert_exchange_rate(trans["operationAmount"]["currency"]["code"], "RUB",
-                              float(trans["operationAmount"]["amount"]), date_now.strftime("%Y-%m-%d"))
