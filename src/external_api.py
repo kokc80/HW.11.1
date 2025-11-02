@@ -11,7 +11,7 @@ api_key = os.getenv('API_KEY')
 
 
 def convert_exchange_rate(money_from: str, money_to: str, money_amount: float, date: str) -> float:
-    """Функция для работы с API конвертация валюты"""
+    """Функция для работы с API формирует ссылку для работы с API и конвертирует валюту на выходе сумма в рублях"""
     url = (f"https://api.apilayer.com/exchangerates_data/convert?to="
            f"{money_to}&from={money_from}&amount={money_amount}")
     # print(f"URL {url}")
@@ -27,11 +27,10 @@ def convert_exchange_rate(money_from: str, money_to: str, money_amount: float, d
 
 
 def transactions_amount(trans: list) -> float:
-    """вывод суммы в руб"""
+    """формирование данных для API конвертации с получением данных из API или возврата суммы в рублях"""
     date_now = datetime.datetime.now()
     if trans["operationAmount"]["currency"]["code"] == "RUB":
         return (trans["operationAmount"]["amount"])
     else:
-        # print("возврат сконвер******")
         return convert_exchange_rate(trans["operationAmount"]["currency"]["code"], "RUB",
                               float(trans["operationAmount"]["amount"]), date_now.strftime("%Y-%m-%d"))
