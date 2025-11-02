@@ -14,10 +14,10 @@ def log(filename=None):
                 error_message = (f'Ошибка в функции: {func.__name__} Ошибка: {e}.'
                                  f' Аргументы: {args}, {kwargs}')
                 log_message = (f'{error_message}')
-                log_message = log_message + str(start_time)
+                log_message = log_message
             if filename:
                 with open(filename, 'w', encoding='utf-8') as f:
-                    f.write(f'{log_message}')
+                    f.write(f'{start_time} - {log_message}')
             else:
                 print(log_message)
         return inner
@@ -31,4 +31,4 @@ def my_func_div(x, y) -> float:
     return (res_div)
 
 
-my_func_div(20, 1)
+my_func_div(20, 0)
