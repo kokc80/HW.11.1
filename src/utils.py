@@ -1,4 +1,5 @@
-import os, json
+import json
+import os
 
 
 def read_json(filename=None) -> dict:

@@ -1,6 +1,7 @@
-from unittest.mock import patch, Mock
-from src.external_api import convert_exchange_rate
 import datetime
+from unittest.mock import Mock, patch
+
+from src.external_api import convert_exchange_rate
 
 # Допустим, что у нас есть `api_key`
 api_key = 'NTP0jsKdybTUyjG8QerQGzzRft0fiuhc'
@@ -9,7 +10,7 @@ api_key = 'NTP0jsKdybTUyjG8QerQGzzRft0fiuhc'
 # Здесь мы определяем функцию теста
 @patch('requests.request')
 def test_convert_exchange_rate(mock_request):
-    # Подготавливаем данные для теста
+    #Функкция тестирования Подготавливаем данные для теста
     tr_list = {
         "operationAmount": {
             "currency": {
@@ -35,7 +36,8 @@ def test_convert_exchange_rate(mock_request):
     money_amount = tr_list["operationAmount"]["amount"]
     date_oper = datetime.datetime.now().strftime("%Y-%m-%d")
     expected_url = (
-        f"https://api.apilayer.com/exchangerates_data/convert?to={money_to}&from={money_from}&amount={money_amount}&date={date_oper}"
+        f"https://api.apilayer.com/exchangerates_data/convert?to="
+        f"{money_to}&from={money_from}&amount={money_amount}&date={date_oper}"
     )
 
     mock_request.assert_called_once_with("GET", expected_url, headers={"apikey": api_key})

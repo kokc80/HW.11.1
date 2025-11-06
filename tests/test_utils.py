@@ -1,6 +1,8 @@
 import os
 from unittest.mock import patch
+
 from src.utils import read_json
+
 ROOT_DIR = os.path.dirname(
     os.path.dirname(
         os.path.abspath(__file__)
