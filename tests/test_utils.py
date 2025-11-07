@@ -1,6 +1,6 @@
 import os
-from unittest.mock import patch
-
+import unittest
+from unittest.mock import patch, mock_open
 from src.utils import read_json
 
 ROOT_DIR = os.path.dirname(
@@ -63,3 +63,20 @@ trans_test_value = [
 def test_read_json(mock_file):
     mock_file.return_value.json.return_value = trans_test_value
     assert read_json(file_path_data) == trans_test_value
+
+
+def test_read_json_err():
+    result = read_json("nofile.json")
+    assert result is None
+
+
+class TestReadJson(unittest.TestCase):
+    @patch('builtins.open', new_callable=mock_open)
+    def test_file_not_found_error(self, mock_open):
+        mock_open.side_effect = FileNotFoundError
+        result = read_json('non_existent_file.json')
+        self.assertEqual(result, [])
+
+
+if __name__ == '__main__':
+    unittest.main()

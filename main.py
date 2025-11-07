@@ -13,3 +13,12 @@ param_dict = transaction_dict[2]
 if type(param_dict) is dict:
     # print(param_dict)
     print(convert_exchange_rate(param_dict))
+
+tr_list = {
+    "operationAmount": {
+        "currency": {
+            "code": "USD"
+        },
+        "amount": "100"
+    }
+}

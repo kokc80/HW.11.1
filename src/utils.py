@@ -15,10 +15,7 @@ def read_json(filename=None) -> dict:
                     return []
     except FileNotFoundError:
         print("Файл не найден")
-        return []
     except json.JSONDecodeError as e:
-        print("Ошибка декодирования JSON!")
-        print(f"Сообщение об ошибке: {e.msg}")
-        print(f"Строка: {e.lineno}, колонка: {e.colno}")
+        print(f"Сообщение об ошибке: {e.msg} Строка: {e.lineno}, колонка: {e.colno}")
     except Exception as e:
         print(e)
