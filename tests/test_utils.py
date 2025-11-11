@@ -1,6 +1,7 @@
 import os
 import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import mock_open, patch
+
 from src.utils import read_json
 
 ROOT_DIR = os.path.dirname(

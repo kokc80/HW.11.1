@@ -1,3 +1,7 @@
+import logging
+import os
+
+
 def get_mask_card_number(card_num: str) -> str:
     """
     Функция принимает на вход номер карты и возвращает ее маску.
@@ -22,6 +26,7 @@ def get_mask_card_number(card_num: str) -> str:
         if (i + 1) % 4 == 0:
             new_card_num = new_card_num + " "
     new_card_num = new_card_num.strip()
+    app_logger.info(" Удачный запуск")
     return new_card_num
 
 
@@ -41,4 +46,27 @@ def get_mask_account(invoice_num: str) -> str:
         new_invoice_num = ""
     else:
         new_invoice_num = "**" + invoice_num[-4:]
+    app_logger.info(" Удачный запуск")
     return new_invoice_num.strip()
+
+
+root_logger = logging.getLogger()
+ROOT_DIR = os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__)
+    )
+)
+
+file_log = f"{ROOT_DIR}\\Logs\\masks.log"
+print(file_log)
+fileExists = os.path.isfile(file_log)
+if fileExists:
+    os.remove(file_log)
+# Создание и получение именованного логера
+app_logger = logging.getLogger(__name__)
+file_handler = logging.FileHandler(file_log)
+file_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+file_handler.setFormatter(file_formatter)
+app_logger.addHandler(file_handler)
+app_logger.setLevel(logging.ERROR)
+app_logger.debug('Debug message')

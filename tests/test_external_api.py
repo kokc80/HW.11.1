@@ -10,7 +10,7 @@ api_key = 'NTP0jsKdybTUyjG8QerQGzzRft0fiuhc'
 # Здесь мы определяем функцию теста
 @patch('requests.request')
 def test_convert_exchange_rate(mock_request):
-    #Функкция тестирования Подготавливаем данные для теста
+    # Функкция тестирования Подготавливаем данные для теста
     tr_list = {
         "operationAmount": {
             "currency": {
