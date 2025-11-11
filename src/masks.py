@@ -69,4 +69,4 @@ file_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message
 file_handler.setFormatter(file_formatter)
 app_logger.addHandler(file_handler)
 app_logger.setLevel(logging.ERROR)
-app_logger.debug('Debug message')
+app_logger.debug('Debug message ')

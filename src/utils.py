@@ -41,7 +41,6 @@ def read_json(filename=None) -> dict:
                 else:
                     app_logger.error("Не удачный запуск")
                     return []
-
     except FileNotFoundError:
         # print("Файл не найден")
         app_logger.error("Файл не найден")
