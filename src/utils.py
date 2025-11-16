@@ -14,7 +14,8 @@ ROOT_DIR = os.path.dirname(
 
 transaction_dict: dict = []
 file_log = f"{ROOT_DIR}\\Logs\\util.log"
-print(file_log)
+# print(file_log)
+# очистка файла лога
 fileExists = os.path.isfile(file_log)
 if fileExists:
     os.remove(file_log)
