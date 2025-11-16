@@ -142,6 +142,9 @@ Code coverage — это метрика, которая показывает, к
 
 
 ## 13.1
+
+создан модуль transaction_reader
+
     Функция read_trans_csv(filename=None) -> list[dict]:
     Для считывания словаря транзакций из файла csv
 
