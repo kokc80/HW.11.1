@@ -150,3 +150,7 @@ Code coverage — это метрика, которая показывает, к
 
     Функция def read_trans_excel(filename=None)
     Для чтекния excel файла 
+
+## 13.2
+
+в модуль processing добавлена функция  

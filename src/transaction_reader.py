@@ -29,11 +29,11 @@ app_logger.debug('Debug message')
 def read_trans_csv(filename=None) -> list[dict]:
     # Функция считывания словаря транзакций из файла csv
     try:
-        print(filename)
+        # print(filename)
         if os.path.isfile(filename):
             # Открываем файл и читаем строки
             with open(filename, encoding='utf-8') as trans_file:
-                csv_reader = csv.reader(trans_file)
+                csv_reader = csv.DictReader(trans_file)
                 app_logger.info(" Удачный запуск")
                 return list(csv_reader)
     except FileNotFoundError:
@@ -51,7 +51,7 @@ def read_trans_excel(filename=None) -> DataFrame:
             with open(filename, encoding='utf-8'):
                 excel_reader = pd.read_excel(filename)
                 app_logger.info(" Удачный запуск")
-                return excel_reader
+                return excel_reader.to_dict("records")
     except FileNotFoundError:
         app_logger.error("Файл не найден")
     except Exception as e:
@@ -59,4 +59,4 @@ def read_trans_excel(filename=None) -> DataFrame:
 
 
 # print(read_trans_csv("F:\\WORK\\PythonEdu\\HW.11.1\\data\\transactions.csv"))
-excel_data = read_trans_excel("F:\\WORK\\PythonEdu\\HW.11.1\\data\\transactions_excel.xlsx")
+# excel_data = read_trans_excel("F:\\WORK\\PythonEdu\\HW.11.1\\data\\transactions_excel.xlsx")
