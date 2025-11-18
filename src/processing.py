@@ -14,8 +14,8 @@ def sort_by_date(data_list: List[dict], reverse1: bool = True) -> List[dict]:
     return list_sorted
 
 
-def filter_by_state(banking_operations: List[Dict[str, str]], state: str = "EXECUTED") -> List:
-    filtered_list: List = []
+def filter_by_state(banking_operations: List[Dict[str, str]], state: str = "EXECUTED") -> List[dict]:
+    filtered_list: List[dict] = []
     # функция фильтрует данные по статусу
     for dict_item in banking_operations:
         if dict_item.get("state") == state:
@@ -24,12 +24,16 @@ def filter_by_state(banking_operations: List[Dict[str, str]], state: str = "EXEC
 
 
 def process_bank_search(data: list[dict], search: str) -> list[dict]:
-    # принимает список словарей с данными о банковских операциях и строку поиска, а возвращает список словарей,
-    # у которых в описании есть данная строка.
-    return (re.findall(search, data['description']))
+    """принимает список словарей с данными о банковских операциях и строку поиска, а возвращает список словарей,
+    у которых в описании есть данная строка."""
+    find_operations = []
+    for operation in data:
+        if re.search(search, operation.get('description', ''), flags = re.IGNORECASE):
+            find_operations.append(operation)
+    return find_operations
 
 
 def process_bank_operations(data: list[dict], categories: list) -> dict:
-    # принимает список словарей с данными о банковских операциях и список категорий операций, а возвращает словарь,
-    # в котором ключи — это названия категорий, а значения — это количество операций в каждой категории.
+    """принимает список словарей с данными о банковских операциях и список категорий операций, а возвращает словарь,
+    в котором ключи — это названия категорий, а значения — это количество операций в каждой категории."""
     pass
