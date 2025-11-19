@@ -10,8 +10,28 @@ ROOT_DIR = os.path.dirname(
 )
 
 global trans_dict
-trans_dict = []
+trans_dict: list[dict] = []
 filename = ""
+
+def input_file_choice(inp_ch_1: str, filename_1) -> list[dict]:
+    if inp_ch_1 == "1":
+        filename_1 = f"{ROOT_DIR}\\data\\{filename_1}"
+        print(f"Для обработки выбран JSON-файл: {filename_1}\n")
+        if (os.path.isfile(filename_1) and filename_1 != ""):
+            trans_dict_1 = read_json(filename_1)
+        return (trans_dict)
+    if inp_ch_1_1 == "2":
+        filename_1 = f"{ROOT_DIR}\\data\\{filename_1}"
+        print(f"Для обработки выбран CSV-файл: {filename_1}\n")
+        if (os.path.isfile(filename_1) and filename_1 != ""):
+            trans_dict = read_trans_csv(filename_1)
+            return (trans_dict)
+    if inp_ch_1_1 == "3":
+        filename_1 = f"{ROOT_DIR}\\data\\{filename_1}"
+        print(f"Для обработки выбран XLSX-файл: {filename_1}\n")
+        if os.path.isfile(filename_1):
+            trans_dict = read_trans_excel(filename_1)
+            return (trans_dict)
 
 
 def main():
@@ -34,31 +54,25 @@ def main():
         if user_choice_1 in ("1", "2", "3"):
             if user_choice_1 == "1":
                 print("Для обработки выбран JSON-файл\n")
-                filename = input("Введите название JSON файла: ") # transactions.json
-                filename =f"{ROOT_DIR}\\data\\{filename}"
-                if (os.path.isfile(filename) and filename != ""):
-                    print(filename)
-                    trans_dict = read_json(filename)
-                    break
+                break
             if user_choice_1 == "2":
-                filename = input("Введите название CSV файла: ")  # transactions.csv
-                filename = f"{ROOT_DIR}\\data\\{filename}"
-                print(f"File name: {filename}\n")
-                if (os.path.isfile(filename) and filename != ""):
-                    trans_dict = read_trans_csv(filename)
                 print("Для обработки выбран CSV-файл\n")
                 break
             if user_choice_1 == "3":
-                filename = input("Введите название XLSX файла: ") # transactions.xlsx
-                filename = f"{ROOT_DIR}\\data\\{filename}"
-                if os.path.isfile(filename):
-                    trans_dict = read_trans_excel(filename)
                 print("Для обработки выбран XLSX-файл\n")
                 break
         else:
             user_choice_1 = input("Ваш выбор?\n")
-    print("""Введите статус, по которому необходимо выполнить фильтрацию.
-    Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING""")
+    filename_1 = input("Введите название файла: ")  # transactions.csv
+    while True:
+        if user_choice_1 in ("1", "2", "3"):
+            trans_dict = input_file_choice(user_choice_1, filename_1)
+            break
+        else:
+            user_choice_1 = input("Ваш выбор?\n")
+
+    print(f"Введите статус, по которому необходимо выполнить фильтрацию. "
+          f"Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING")
     while True:
         if user_choice_2.lower() in ("executed", "canceled", "pending"):
             print(f"Операции отфильтрованы по статусу \"{user_choice_2.upper()}\"\n")
