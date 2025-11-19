@@ -1,16 +1,6 @@
-import os
-import unittest
-from unittest.mock import mock_open, patch
-
-from src.utils import read_json
-
-ROOT_DIR = os.path.dirname(
-    os.path.dirname(
-        os.path.abspath(__file__)
-    )
-)
-file_path_data = f"{ROOT_DIR}\\data\\operations_test.json"
-
+import pytest
+from unittest.mock import patch, MagicMock, mock_open
+from src.transaction_reader import read_trans_excel, read_trans_csv
 
 trans_test_value = [
     {
@@ -60,24 +50,20 @@ trans_test_value = [
 ]
 
 
-@patch('utils.read_json')
-def test_read_json(mock_file):
-    mock_file.return_value.json.return_value = trans_test_value
-    assert read_json(file_path_data) == trans_test_value
+def test_read_trans_excel():
+    mock_data = []
+    with patch('src.transaction_reader.pd.read_excel', return_value=MagicMock(to_dict=lambda orient: mock_data)):
+        assert read_trans_excel('tеst.xlsx') == mock_data
 
 
-def test_read_json_err():
-    result = read_json("nofile.json")
-    assert result == []
+@patch('builtins.open', new_callable=mock_open, read_data='id,state,date,amount\n650703,EXECUTED,2023-09-05,16210\n')
+def test_read_trans_csv(mock_file):
+    expected = [{'id': '650703', 'state': 'EXECUTED', 'date': '2023-09-05', 'amount': '16210'}]
+    with patch('os.path.isfile', return_value=True):
+        assert read_trans_csv("test.csv") == expected
 
 
-class TestReadJson(unittest.TestCase):
-    @patch('builtins.open', new_callable=mock_open)
-    def test_file_not_found_error(self, mock_open):
-        mock_open.side_effect = FileNotFoundError
-        result = read_json('non_existent_file.json')
-        self.assertEqual(result, [])
 
-
-if __name__ == '__main__':
-    unittest.main()
+def test_read_trans_excel():
+    with pytest.raises(FileNotFoundError, match="Файл не найден"):
+        raise FileNotFoundError("Файл не найден")

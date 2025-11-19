@@ -1,5 +1,7 @@
 from datetime import datetime
 from typing import Dict, List
+from collections import Counter
+
 import re
 
 
@@ -23,17 +25,31 @@ def filter_by_state(banking_operations: List[Dict[str, str]], state: str = "EXEC
     return filtered_list
 
 
-def process_bank_search(data: list[dict], search: str) -> list[dict]:
+def process_bank_search(list_dict: list[dict], search_string: str) -> list[dict]:
     """принимает список словарей с данными о банковских операциях и строку поиска, а возвращает список словарей,
     у которых в описании есть данная строка."""
-    find_operations = []
-    for operation in data:
-        if re.search(search, operation.get('description', ''), flags = re.IGNORECASE):
-            find_operations.append(operation)
-    return find_operations
+    try:
+        new_list_dict = list()
+
+        pattern = re.compile(search_string, re.IGNORECASE)
+        for item in list_dict:
+            key_value = item.get("description")
+            if key_value and pattern.search(key_value):
+                new_list_dict.append(item)
+
+    except Exception as e:
+        print(f"Внимание! Ошибка {e}! Введены не корректные данные!")
+
+    return new_list_dict
 
 
 def process_bank_operations(data: list[dict], categories: list) -> dict:
     """принимает список словарей с данными о банковских операциях и список категорий операций, а возвращает словарь,
     в котором ключи — это названия категорий, а значения — это количество операций в каждой категории."""
-    pass
+    categories_counter = Counter()
+    for operation in data:
+        description = operation.get("description", "")
+        for category in categories:
+            if category.lower() in description.lower():
+                categories_counter[category] += 1
+    return categories_counter

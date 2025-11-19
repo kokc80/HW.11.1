@@ -101,7 +101,6 @@ def main():
         else:
             user_choice_5 = input("Ваш выбор? \"Да\"\\\"Нет\"\n")
 
-    print(f"до {trans_dict}")
 
     user_choice_6 = input("Отфильтровать список транзакций по определенному слову в описании? Да/Нет\n")
     while True:

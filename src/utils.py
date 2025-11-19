@@ -12,24 +12,22 @@ ROOT_DIR = os.path.dirname(
 )
 
 
-transaction_dict: dict = []
+transaction_dict: dict = dict()
 file_log = f"{ROOT_DIR}\\Logs\\util.log"
 # print(file_log)
 # очистка файла лога
-fileExists = os.path.isfile(file_log)
-if fileExists:
-    os.remove(file_log)
+with open(file_log, 'w'):
 # Создание и получение именованного логера
-app_logger = logging.getLogger(__name__)
-file_handler = logging.FileHandler(file_log)
-file_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
-file_handler.setFormatter(file_formatter)
-app_logger.addHandler(file_handler)
-app_logger.setLevel(logging.DEBUG)
-app_logger.debug('Debug message')
+    app_logger = logging.getLogger(__name__)
+    file_handler = logging.FileHandler(file_log)
+    file_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+    file_handler.setFormatter(file_formatter)
+    app_logger.addHandler(file_handler)
+    app_logger.setLevel(logging.DEBUG)
+    app_logger.debug('Debug message')
 
 
-def read_json(filename=None) -> dict:
+def read_json(filename=None) -> dict():
     """чтение файла json"""
     try:
         if os.path.isfile(filename):
@@ -42,6 +40,8 @@ def read_json(filename=None) -> dict:
                 else:
                     app_logger.error("Не удачный запуск")
                     return []
+        else:
+            return []
     except FileNotFoundError:
         # print("Файл не найден")
         app_logger.error("Файл не найден")

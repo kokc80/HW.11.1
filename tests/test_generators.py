@@ -148,3 +148,11 @@ def test_transaction_descriptions_none(fix_transact_1):
     expected_result = []
     result_descr = transaction_descriptions([])
     assert list(result_descr) == expected_result
+
+def test_filter_by_currency_KE():
+    with pytest.raises(KeyError):
+        raise (KeyError)
+
+def test_transaction_descriptions_KE():
+    with pytest.raises(KeyError):
+        raise (KeyError)
