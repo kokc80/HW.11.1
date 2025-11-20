@@ -17,7 +17,6 @@ file_log = f"{ROOT_DIR}\\Logs\\util.log"
 # print(file_log)
 # очистка файла лога
 with open(file_log, 'w'):
-# Создание и получение именованного логера
     app_logger = logging.getLogger(__name__)
     file_handler = logging.FileHandler(file_log)
     file_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
@@ -27,7 +26,7 @@ with open(file_log, 'w'):
     app_logger.debug('Debug message')
 
 
-def read_json(filename=None) -> dict():
+def read_json(filename=None) -> list[dict]:
     """чтение файла json"""
     try:
         if os.path.isfile(filename):

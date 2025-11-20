@@ -14,7 +14,6 @@ ROOT_DIR = os.path.dirname(
 file_log = f"{ROOT_DIR}\\Logs\\trans_read.log"
 # очистка файла лога
 with open(file_log, 'w'):
-# Создание и получение именованного логера
     app_logger = logging.getLogger(__name__)
     file_handler = logging.FileHandler(file_log)
     file_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
