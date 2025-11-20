@@ -67,7 +67,7 @@ def test_read_json(mock_file):
 
 
 def test_read_json_err():
-    result = read_json("nofile.json")
+    result = read_json("no_file.json")
     assert result == []
 
 

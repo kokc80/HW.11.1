@@ -25,7 +25,7 @@ trans_test_value = [
         "operationAmount": {
             "amount": "87941.37",
             "currency": {
-                "name": "руб.",
+                "name": "РУБ.",
                 "code": "RUB"
             }
         },

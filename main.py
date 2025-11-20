@@ -16,7 +16,7 @@ filename = ""
 def input_file_choice(inp_ch_1: str, filename_1) -> list[dict]:
     if inp_ch_1 == "1":
         filename_1 = f"{ROOT_DIR}\\data\\{filename_1}"
-        print(f"Для обработки выбран JSON-файл: {filename_1}\n")
+        print(f"Для  обработки выбран JSON-файл: {filename_1}\n")
         if (os.path.isfile(filename_1) and filename_1 != ""):
             trans_dict_1 = read_json(filename_1)
         return (trans_dict)
