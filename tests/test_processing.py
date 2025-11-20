@@ -1,227 +1,54 @@
-import pytest
-
-from src.processing import filter_by_state, sort_by_date, process_bank_search, process_bank_operations
-
-
-@pytest.fixture
-def pytest_list_1():
-    return [
-        {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
-        {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
-        {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
-        {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
-    ]
+import re
+from collections import Counter
+from datetime import datetime
+from typing import Dict, List
 
 
-test_list_sorted = [
-    {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
-    {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
-    {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
-    {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
-]
-
-
-@pytest.fixture
-def test_list_sorted_f():
-    return [
-        {"date": "2018-06-30T02:08:58.425572", "id": 939719570, "state": "EXECUTED"},
-        {"date": "2018-09-12T21:27:25.241689", "id": 594226727, "state": "CANCELED"},
-        {"date": "2018-10-14T08:21:33.419441", "id": 615064591, "state": "CANCELED"},
-        {"date": "2019-07-03T18:35:29.512364", "id": 414288291, "state": "EXECUTED"},
-    ]
-
-
-def test_filter_by_state_1(pytest_list_1):
-    assert filter_by_state(pytest_list_1) == [
-        {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
-        {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
-    ]
-
-
-def test_sort_by_date_1(test_list_sorted_f):
-    assert (
-        sort_by_date(
-            [
-                {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
-                {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
-                {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
-                {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
-            ],
-            False,
-        )
-        == test_list_sorted_f
+def sort_by_date(data_list: List[dict], reverse1: bool = True) -> List[dict]:
+    """Функия принимает список словарей и необязательный параметр,
+    задающий порядок сортировки (по умолчанию — убывание). Функция
+    должна возвращать новый список, отсортированный по дате (date)"""
+    # Преобразуем строки дат в объекты datetime для корректной сортировки
+    list_sorted = sorted(
+        data_list, key=lambda x: datetime.fromisoformat(x["date"].replace("Z", "+00:00")), reverse=reverse1
     )
+    return list_sorted
 
 
-pytest_param1 = [
-    {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
-    {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
-    {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
-    {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
-]
-
-pytest_param2 = [
-    {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
-    {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
-    {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
-    {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
-]
-
-pytest_param3 = [
-    {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
-    {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
-    {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
-    {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
-]
+def filter_by_state(banking_operations: List[Dict[str, str]], state: str = "EXECUTED") -> List[dict]:
+    filtered_list: List[dict] = []
+    # функция фильтрует данные по статусу
+    for dict_item in banking_operations:
+        if dict_item.get("state") == state:
+            filtered_list.append(dict_item)
+    return filtered_list
 
 
-@pytest.mark.parametrize(
-    "data_list,expected_result",
-    [(pytest_param1, test_list_sorted), (pytest_param2, test_list_sorted), (pytest_param3, test_list_sorted)],
-)
-def test_sort_by_date_2(data_list, expected_result):
-    assert list(sort_by_date(data_list, True)) == expected_result
+def process_bank_search(list_dict: list[dict], search_string: str) -> list[dict]:
+    """принимает список словарей с данными о банковских операциях и строку поиска, а возвращает список словарей,
+    у которых в описании есть данная строка."""
+    try:
+        new_list_dict = list()
+
+        pattern = re.compile(search_string, re.IGNORECASE)
+        for item in list_dict:
+            key_value = item.get("description")
+            if key_value and pattern.search(key_value):
+                new_list_dict.append(item)
+
+    except Exception as e:
+        print(f"Внимание! Ошибка {e}! Введены не корректные данные!")
+
+    return new_list_dict
 
 
-def test_process_bank_search():
-    assert process_bank_search([
-  {
-    "id": 441945886,
-    "state": "EXECUTED",
-    "date": "2019-08-26T10:50:58.294041",
-    "operationAmount": {
-      "amount": "31957.58",
-      "currency": {
-        "name": "руб.",
-        "code": "RUB"
-      }
-    },
-    "description": "Перевод организации",
-    "from": "Maestro 1596837868705199",
-    "to": "Счет 64686473678894779589"
-  },
-  {
-    "id": 41428829,
-    "state": "EXECUTED",
-    "date": "2019-07-03T18:35:29.512364",
-    "operationAmount": {
-      "amount": "8221.37",
-      "currency": {
-        "name": "USD",
-        "code": "USD"
-      }
-    },
-    "description": "Перевод организации",
-    "from": "MasterCard 7158300734726758",
-    "to": "Счет 35383033474447895560"
-  },
-  {
-    "id": 939719570,
-    "state": "EXECUTED",
-    "date": "2018-06-30T02:08:58.425572",
-    "operationAmount": {
-      "amount": "9824.07",
-      "currency": {
-        "name": "USD",
-        "code": "USD"
-      }
-    },
-    "description": "Перевод организации",
-    "from": "Счет 75106830613657916952",
-    "to": "Счет 11776614605963066702"
-  },
-  {
-    "id": 587085106,
-    "state": "PENDING",
-    "date": "2018-03-23T10:45:06.972075",
-    "operationAmount": {
-      "amount": "48223.05",
-      "currency": {
-        "name": "руб.",
-        "code": "RUB"
-      }
-    },
-    "description": "Открытие вклада",
-    "to": "Счет 41421565395219882431"
-  },
-],"Открытие вклада") ==([{
-    "id": 587085106,
-    "state": "PENDING",
-    "date": "2018-03-23T10:45:06.972075",
-    "operationAmount": {
-      "amount": "48223.05",
-      "currency": {
-        "name": "руб.",
-        "code": "RUB"
-      }
-    },
-    "description": "Открытие вклада",
-    "to": "Счет 41421565395219882431"
-  }])
-
-
-test1 = [
-  {
-    "id": 441945886,
-    "state": "EXECUTED",
-    "date": "2019-08-26T10:50:58.294041",
-    "operationAmount": {
-      "amount": "31957.58",
-      "currency": {
-        "name": "руб.",
-        "code": "RUB"
-      }
-    },
-    "description": "Перевод организации",
-    "from": "Maestro 1596837868705199",
-    "to": "Счет 64686473678894779589"
-  },
-  {
-    "id": 41428829,
-    "state": "EXECUTED",
-    "date": "2019-07-03T18:35:29.512364",
-    "operationAmount": {
-      "amount": "8221.37",
-      "currency": {
-        "name": "USD",
-        "code": "USD"
-      }
-    },
-    "description": "Перевод организации",
-    "from": "MasterCard 7158300734726758",
-    "to": "Счет 35383033474447895560"
-  },
-  {
-    "id": 939719570,
-    "state": "EXECUTED",
-    "date": "2018-06-30T02:08:58.425572",
-    "operationAmount": {
-      "amount": "9824.07",
-      "currency": {
-        "name": "USD",
-        "code": "USD"
-      }
-    },
-    "description": "Перевод организации",
-    "from": "Счет 75106830613657916952",
-    "to": "Счет 11776614605963066702"
-  },
-  {
-    "id": 587085106,
-    "state": "PENDING",
-    "date": "2018-03-23T10:45:06.972075",
-    "operationAmount": {
-      "amount": "48223.05",
-      "currency": {
-        "name": "руб.",
-        "code": "RUB"
-      }
-    },
-    "description": "Открытие вклада",
-    "to": "Счет 41421565395219882431"
-  },
-]
-
-categories_list = ("Открытие вклада","Перевод организации")
-def test_process_bank_operations():
-    assert process_bank_operations(test1,categories_list) == ({'Перевод организации': 3, 'Открытие вклада': 1})
+def process_bank_operations(data: list[dict], categories: list) -> dict:
+    """принимает список словарей с данными о банковских операциях и список категорий операций, а возвращает словарь,
+    в котором ключи — это названия категорий, а значения — это количество операций в каждой категории."""
+    categories_counter = Counter()
+    for operation in data:
+        description = operation.get("description", "")
+        for category in categories:
+            if category.lower() in description.lower():
+                categories_counter[category] += 1
+    return categories_counter

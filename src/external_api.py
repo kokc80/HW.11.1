@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Получение значения переменной GITHUB_TOKEN из .env-файла
-api_key = os.getenv('API_KEY')
+api_key = os.getenv("API_KEY")
 
 
 def convert_exchange_rate(tr_list: dict) -> float:
@@ -18,16 +18,18 @@ def convert_exchange_rate(tr_list: dict) -> float:
         money_from = tr_list["operationAmount"]["currency"]["code"]
         money_amount = tr_list["operationAmount"]["amount"]
         date_oper = datetime.datetime.now().strftime("%Y-%m-%d")
-        url = (f"https://api.apilayer.com/exchangerates_data/convert?to="
-               f"{money_to}&from={money_from}&amount={money_amount}&date={date_oper}")
+        url = (
+            f"https://api.apilayer.com/exchangerates_data/convert?to="
+            f"{money_to}&from={money_from}&amount={money_amount}&date={date_oper}"
+        )
         headers = {"apikey": api_key}
         try:
             response = requests.request("GET", url, headers=headers)
             response.raise_for_status()  # Проверка статуса ответа
             data = response.json()
             # Проверка наличия ключа 'result'
-            if 'result' in data:
-                return float(data['result'])
+            if "result" in data:
+                return float(data["result"])
             else:
                 print("Ключ 'result' отсутствует в ответе")
         except requests.exceptions.HTTPError as http_err:

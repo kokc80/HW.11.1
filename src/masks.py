@@ -51,11 +51,7 @@ def get_mask_account(invoice_num: str) -> str:
 
 
 root_logger = logging.getLogger()
-ROOT_DIR = os.path.dirname(
-    os.path.dirname(
-        os.path.abspath(__file__)
-    )
-)
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 file_log = f"{ROOT_DIR}\\Logs\\masks.log"
 print(file_log)
@@ -65,8 +61,8 @@ if fileExists:
 # Создание и получение именованного логера
 app_logger = logging.getLogger(__name__)
 file_handler = logging.FileHandler(file_log)
-file_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+file_formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
 file_handler.setFormatter(file_formatter)
 app_logger.addHandler(file_handler)
 app_logger.setLevel(logging.ERROR)
-app_logger.debug('Debug message ')
+app_logger.debug("Debug message ")

@@ -5,25 +5,21 @@ import os
 # Получение корневого логера
 root_logger = logging.getLogger()
 
-ROOT_DIR = os.path.dirname(
-    os.path.dirname(
-        os.path.abspath(__file__)
-    )
-)
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 transaction_dict: dict = dict()
 file_log = f"{ROOT_DIR}\\Logs\\util.log"
 # print(file_log)
 # очистка файла лога
-with open(file_log, 'w'):
+with open(file_log, "w"):
     app_logger = logging.getLogger(__name__)
     file_handler = logging.FileHandler(file_log)
-    file_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+    file_formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
     file_handler.setFormatter(file_formatter)
     app_logger.addHandler(file_handler)
     app_logger.setLevel(logging.DEBUG)
-    app_logger.debug('Debug message')
+    app_logger.debug("Debug message")
 
 
 def read_json(filename=None) -> list[dict]:
@@ -31,7 +27,7 @@ def read_json(filename=None) -> list[dict]:
     try:
         if os.path.isfile(filename):
             # Открываем файл и читаем строки
-            with open(filename, encoding='utf-8') as f:
+            with open(filename, encoding="utf-8") as f:
                 json_list = json.load(f)
                 if type(json_list) is list:
                     app_logger.info(" Удачный запуск")

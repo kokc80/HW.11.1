@@ -1,8 +1,7 @@
+import re
+from collections import Counter
 from datetime import datetime
 from typing import Dict, List
-from collections import Counter
-
-import re
 
 
 def sort_by_date(data_list: List[dict], reverse1: bool = True) -> List[dict]:
