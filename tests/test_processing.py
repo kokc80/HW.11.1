@@ -1,54 +1,83 @@
-import re
-from collections import Counter
-from datetime import datetime
-from typing import Dict, List
+import pytest
+
+from src.processing import filter_by_state, sort_by_date
 
 
-def sort_by_date(data_list: List[dict], reverse1: bool = True) -> List[dict]:
-    """Функия принимает список словарей и необязательный параметр,
-    задающий порядок сортировки (по умолчанию — убывание). Функция
-    должна возвращать новый список, отсортированный по дате (date)"""
-    # Преобразуем строки дат в объекты datetime для корректной сортировки
-    list_sorted = sorted(
-        data_list, key=lambda x: datetime.fromisoformat(x["date"].replace("Z", "+00:00")), reverse=reverse1
+@pytest.fixture
+def pytest_list_1():
+    return [
+        {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
+        {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
+        {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
+        {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
+    ]
+
+
+test_list_sorted = [
+    {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
+    {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
+    {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
+    {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
+]
+
+
+@pytest.fixture
+def test_list_sorted_f():
+    return [
+        {"date": "2018-06-30T02:08:58.425572", "id": 939719570, "state": "EXECUTED"},
+        {"date": "2018-09-12T21:27:25.241689", "id": 594226727, "state": "CANCELED"},
+        {"date": "2018-10-14T08:21:33.419441", "id": 615064591, "state": "CANCELED"},
+        {"date": "2019-07-03T18:35:29.512364", "id": 414288291, "state": "EXECUTED"},
+    ]
+
+
+def test_filter_by_state_1(pytest_list_1):
+    assert filter_by_state(pytest_list_1) == [
+        {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
+        {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
+    ]
+
+
+def test_sort_by_date_1(test_list_sorted_f):
+    assert (
+        sort_by_date(
+            [
+                {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
+                {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
+                {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
+                {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
+            ],
+            False,
+        )
+        == test_list_sorted_f
     )
-    return list_sorted
 
 
-def filter_by_state(banking_operations: List[Dict[str, str]], state: str = "EXECUTED") -> List[dict]:
-    filtered_list: List[dict] = []
-    # функция фильтрует данные по статусу
-    for dict_item in banking_operations:
-        if dict_item.get("state") == state:
-            filtered_list.append(dict_item)
-    return filtered_list
+pytest_param1 = [
+    {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
+    {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
+    {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
+    {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
+]
+
+pytest_param2 = [
+    {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
+    {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
+    {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
+    {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
+]
+
+pytest_param3 = [
+    {"id": 414288291, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
+    {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
+    {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
+    {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
+]
 
 
-def process_bank_search(list_dict: list[dict], search_string: str) -> list[dict]:
-    """принимает список словарей с данными о банковских операциях и строку поиска, а возвращает список словарей,
-    у которых в описании есть данная строка."""
-    try:
-        new_list_dict = list()
-
-        pattern = re.compile(search_string, re.IGNORECASE)
-        for item in list_dict:
-            key_value = item.get("description")
-            if key_value and pattern.search(key_value):
-                new_list_dict.append(item)
-
-    except Exception as e:
-        print(f"Внимание! Ошибка {e}! Введены не корректные данные!")
-
-    return new_list_dict
-
-
-def process_bank_operations(data: list[dict], categories: list) -> dict:
-    """принимает список словарей с данными о банковских операциях и список категорий операций, а возвращает словарь,
-    в котором ключи — это названия категорий, а значения — это количество операций в каждой категории."""
-    categories_counter = Counter()
-    for operation in data:
-        description = operation.get("description", "")
-        for category in categories:
-            if category.lower() in description.lower():
-                categories_counter[category] += 1
-    return categories_counter
+@pytest.mark.parametrize(
+    "data_list,expected_result",
+    [(pytest_param1, test_list_sorted), (pytest_param2, test_list_sorted), (pytest_param3, test_list_sorted)],
+)
+def test_sort_by_date_2(data_list, expected_result):
+    assert list(sort_by_date(data_list, True)) == expected_result
