@@ -1,7 +1,7 @@
 import pytest
 from unicodedata import category
 
-from src.processing import filter_by_state, sort_by_date, process_bank_operations
+from src.processing import filter_by_state, sort_by_date, process_bank_operations, process_bank_search
 
 
 @pytest.fixture
@@ -147,3 +147,20 @@ def test_sort_by_date_2(data_list, expected_result):
 def test_process_bank_operations():
     categories_list=({'Перевод организации', 'Открытие вклада'})
     assert process_bank_operations(test1,categories_list) == ({'Перевод организации': 3, 'Открытие вклада': 1})
+
+
+def test_process_bank_search():
+    assert process_bank_search(test1,"Открытие") == [{
+    "id": 587085106,
+    "state": "PENDING",
+    "date": "2018-03-23T10:45:06.972075",
+    "operationAmount": {
+      "amount": "48223.05",
+      "currency": {
+        "name": "руб.",
+        "code": "RUB"
+      }
+    },
+    "description": "Открытие вклада",
+    "to": "Счет 41421565395219882431"
+  }]
