@@ -7,7 +7,7 @@ def filter_by_currency(transact: list, currency: str) -> Iterable:
     где валюта операции соответствует заданной (например, USD)."""
     for trans in transact:
         try:
-            if trans["operationAmount"]["currency"]["name"] == currency:
+            if trans["operationAmount"]["currency"]["code"] == currency:
                 yield trans
         except KeyError:
             continue  # пропускаем некорректные транзакции

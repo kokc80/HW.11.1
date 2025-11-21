@@ -6,8 +6,7 @@ from src.transaction_reader import read_trans_csv, read_trans_excel
 from src.utils import read_json
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-global trans_dict
-trans_dict: list[dict] = []
+trans_dict: list[dict]
 filename = ""
 
 
@@ -52,7 +51,6 @@ def main():
     user_choice_4 = "none"
     user_choice_5 = "none"
     user_choice_6 = "none"
-    global trans_dict
     trans_dict: list[dict] = []
 
     while True:
@@ -116,7 +114,7 @@ def main():
                 break
             else:
                 user_choice_3 = input('Ваш выбор? "Да"\\"Нет"\n')
-        print(trans_dict)
+        print(f"по дате {trans_dict}")
 
     user_choice_5 = input("Выводить только рублевые транзакции? Да / Нет\n")
     while True:
@@ -125,10 +123,11 @@ def main():
                 trans_dict = list(filter_by_currency(trans_dict, "RUB"))
                 break
             if user_choice_5.lower() == "нет":
+                trans_dict = trans_dict
                 break
         else:
-            input_file_choice()
             user_choice_5 = input('Ваш выбор? "Да"\\"Нет"\n')
+    print(f"RUB {trans_dict}")
 
     user_choice_6 = input("Отфильтровать список транзакций по определенному слову в описании? Да/Нет\n")
     while True:
