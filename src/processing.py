@@ -35,10 +35,8 @@ def process_bank_search(list_dict: list[dict], search_string: str) -> list[dict]
             key_value = item.get("description")
             if key_value and pattern.search(key_value):
                 new_list_dict.append(item)
-
     except Exception as e:
         print(f"Внимание! Ошибка {e}! Введены не корректные данные!")
-
     return new_list_dict
 
 
