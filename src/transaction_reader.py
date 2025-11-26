@@ -40,7 +40,7 @@ def read_trans_csv(filename=None) -> list[dict]:
 def read_trans_excel(filename=None) -> list[dict]:
     # функция для чтения из Excel файла
     try:
-        print(filename)
+        # print(f"файл {filename}")
         if os.path.isfile(filename):
             # Открываем файл и читаем строки
             excel_reader = pd.read_excel(filename)

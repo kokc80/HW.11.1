@@ -149,7 +149,9 @@ Code coverage — это метрика, которая показывает, к
     Для считывания словаря транзакций из файла csv
 
     Функция def read_trans_excel(filename=None)
-    Для чтекния excel файла 
+    Для чтекния excel файла
+
+    pip install openpyxl
 
 ## 13.2
 
