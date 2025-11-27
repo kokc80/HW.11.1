@@ -4,6 +4,7 @@ import datetime
 import math
 import json
 import requests
+from numpy.ma.extras import unique
 
 from src.transaction_reader import read_trans_excel
 from src.utils import read_json
@@ -16,7 +17,11 @@ def str_to_date(date_i: str, period_d="M") -> dict:
     возвращает словарь из даты начала и даты окончания"""
     date_ex1: datetime
     date_ex2: datetime
-    date_ex2 = datetime.datetime.strptime(date_i, "%Y-%m-%d %H:%M:%S")
+    if period_d == "ALL":
+        date_ex1 = datetime.datetime.strptime("1950-01-01 00:00:01", "%Y-%m-%d %H:%M:%S")
+        date_ex2 = datetime.datetime.strptime("2222-12-31 23:59:59", "%Y-%m-%d %H:%M:%S")
+    else:
+        date_ex2 = datetime.datetime.strptime(date_i, "%Y-%m-%d %H:%M:%S")
     if period_d == "W" and date_ex2.day <= 7:
         date_ex1 = date_ex2.replace(month=date_ex2.month, day=1, year=date_ex2.year, hour=0, minute=0, second=1)
     else:
@@ -25,6 +30,8 @@ def str_to_date(date_i: str, period_d="M") -> dict:
         date_ex1 = date_ex2.replace(month=date_ex2.month, day=1, year=date_ex2.year)
     if period_d == "Y":
         date_ex1 = date_ex2.replace(month=date_ex2.month, day=1, year=date_ex2.year - 1)
+    if period_d == "ALL":
+        date_ex1 = date_ex2.replace(month=date_ex2.month, day=1, year=1900)
     return {"Дата начала": date_ex1, "Дата окончания": date_ex2}
 
 
@@ -49,7 +56,8 @@ def str_greeting(time_1: datetime) -> str:
 
 def sort_by_sum(transact_list: list[dict]) -> list[dict]:
     """Сортировка по Сумме"""
-    list_sorted = sorted(transact_list, transact_list["Сумма операции"])
+    list_sorted = sorted(transact_list, key=lambda p: p["Сумма операции"], reverse=True)
+    list_new = list_sorted[0:4:1]
     return (list_sorted)
 
 
@@ -63,18 +71,20 @@ def sp500(list_stocks: list) -> list:
         if response.status_code == requests.codes.ok:
 #            print(response.text)
             stock_price = response.json()
-            list_sp=(stock_price["ticker"], stock_price["price"])
+            list_sp= (stock_price["ticker"], stock_price["price"])
             list_stock_price.append(list_sp)
+            # лог print("response list_stock", response)
 #            print(list_sp)
         else:
             print("Error:", response.status_code, response.text)
     return list_stock_price
 
 
-def curr_rate(list_cur: list) -> list:
+def curr_rate(list_cur: list) -> list[dict]:
     api_url = "https://v6.exchangerate-api.com/v6/5d56c60cad06d1e4126e1e91/latest/RUB"
     response = requests.get(api_url)
     curr_val = response.json()
+    print("response curr_rate",response)
     list_cur_f = curr_val["conversion_rates"]
     list_curs = []
     for item_c in list_cur:
@@ -82,17 +92,22 @@ def curr_rate(list_cur: list) -> list:
         list_curs.append(list_curs1)
     return (list_curs)
 
-def main_web(date_input: str, period_d="M"):
+def main_web(date_input: str, period_d="ALL"):
     """Главная функция, принимающая на вход строку с датой и временем в формате
     YYYY-MM-DD HH:MM:SS и возвращающая JSON-ответ с данными:"""
-    excel_data = read_trans_excel(ROOT_DIR + "\\data\\operations.xlsx")
-    trans_json = json.dumps(excel_data, ensure_ascii=False, indent=2)
-    time_now = datetime.datetime.now()
-    time_now = datetime.datetime(2025, 5, 9, 2, 0, 0)
-    greeting_val_g = str_greeting(time_now)
+    excel_data = read_trans_excel(ROOT_DIR + "\\data\\operations2.xlsx")
     all_card_numbers = []
 
     dates = str_to_date(date_input, period_d)
+    list_top_excel = []
+    list_top_excel = sort_by_sum(excel_data)[:5]
+    list_top_transaction = []
+
+    for transact in list_top_excel:
+        new_transact = {"date": transact.get("Дата операции"), "amount": transact.get("Сумма операции"),
+                        "category": transact.get("Категория"), "description": transact.get("Описание")}
+        list_top_transaction.append(new_transact)
+
     for transaction in excel_data:
         if ("Номер карты" in transaction and "Сумма операции" in transaction and "Кэшбэк" in transaction):
             if transaction["Номер карты"] not in [None, " ", {}, [], ""]:
@@ -100,7 +115,7 @@ def main_web(date_input: str, period_d="M"):
                 all_card_numbers.append(card_num)
         dedupl_card_list = list()
         [dedupl_card_list.append(item)
-         for item in all_card_numbers if (item not in dedupl_card_list and item not in ['nan'])]
+        for item in all_card_numbers if (item not in dedupl_card_list and item not in ['nan'])]
 
     new_dict = []
     date_1 = dates["Дата начала"]
@@ -120,28 +135,29 @@ def main_web(date_input: str, period_d="M"):
                 cashback = 0
             date_oper = trans.get('Дата операции')
             new_dict_i = {"last_digit": last_digits, "cashback": cashback, "total_spent": total_spent,
-                          "date_oper": {date_oper}}
+                          "date_oper": date_oper}
             new_dict.append(new_dict_i)
-
-    card_list = list()
+    unique_card_list = list() # список номеров карт
     for item in new_dict:
-        card_list.append(item["last_digit"])
-    dedupl_card_list = list()
-    [dedupl_card_list.append(item) for item in card_list if (item not in dedupl_card_list)]
-    trans_json = f"\"greeting\": \"{greeting_val_g}\",\n cards: ["
-    for items in dedupl_card_list:
+        if item["last_digit"] not in unique_card_list:
+            unique_card_list.append(item["last_digit"])
+
+    trans_list_end = []
+    for items in unique_card_list:
         total_spent = 0
         cashback = 0
+
         for trans in new_dict:
             if trans["last_digit"] == items:
                 total_spent = total_spent + trans["total_spent"]
                 cashback_1 = trans["cashback"]
                 cashback = cashback + cashback_1
-        trans_json_1 = f"{items}, {total_spent}, {cashback}"
-        trans_json = trans_json + "{" + trans_json_1 + "}, "
-    trans_json = trans_json + "]"
-    # print(trans_json)
-    json_string = json.dumps(trans_json, ensure_ascii=False, indent=2)
+                trans_list_item = {"last_digit": items, "cashback": cashback, "total_spent": total_spent}
+        trans_list_end.append(trans_list_item)
+        # создать Json
+    str_main = json.dumps(trans_list_end, ensure_ascii=False, indent=2)
+    str_top = json.dumps(list_top_transaction, ensure_ascii=False, indent=2)
+    json_string = {"json_top": list_top_transaction, "json_main": trans_list_end }
     return (json_string)
 
 file_sett= ROOT_DIR + "\\data\\user_settings.json"
@@ -150,6 +166,28 @@ sett_list = read_sett(file_sett)
 list_curr = (sett_list[0]["user_currencies"])
 list_stocks = (sett_list[0]["user_stocks"])
 # print(list_curr,list_stocks)
-print(main_web("2021-09-27 20:56:30", period_d="M"))
-print(sp500(list_stocks))
-print(curr_rate(list_curr))
+
+rez_main = main_web("2021-09-27 20:56:30", period_d="ALL")
+rez_main_j = rez_main["json_main"]
+rez_top_j = rez_main["json_top"]
+
+rez_curr = curr_rate(list_curr)
+rez_sp500 = json.dumps(sp500(list_stocks) , ensure_ascii=False, indent=2)
+
+time_now = datetime.datetime.now()
+time_now = datetime.datetime(2025, 5, 9, 2, 0, 0)
+greeting_val_g = str_greeting(time_now)
+
+list_out = [{"greting": greeting_val_g}]
+list_out_tmp = {"cards": rez_main_j}
+list_out.append(list_out_tmp)
+list_out_tmp = {"top_transaction": rez_top_j}
+list_out.append(list_out_tmp)
+list_out_tmp = {"currency_rates": rez_curr}
+list_out.append(list_out_tmp)
+list_out_tmp = {"stock_prices": rez_sp500}
+json_out = json.dumps( list_out, ensure_ascii=False, indent=2)
+
+
+rez_out = json.dumps(list_out , ensure_ascii=False, indent=2)
+print("out",rez_out)
