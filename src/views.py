@@ -69,12 +69,10 @@ def sp500(list_stocks: list) -> list:
         response = requests.get(api_url, headers={'X-Api-Key': 'gGXKL/ZK0xeTUntTxi4iDw==OjDYqa02l4VIPlYW'})
         list_sp = {}
         if response.status_code == requests.codes.ok:
-#            print(response.text)
             stock_price = response.json()
             list_sp= (stock_price["ticker"], stock_price["price"])
             list_stock_price.append(list_sp)
             # лог print("response list_stock", response)
-#            print(list_sp)
         else:
             print("Error:", response.status_code, response.text)
     return list_stock_price
@@ -95,6 +93,12 @@ def curr_rate(list_cur: list) -> list[dict]:
 def main_web(date_input: str, period_d="ALL"):
     """Главная функция, принимающая на вход строку с датой и временем в формате
     YYYY-MM-DD HH:MM:SS и возвращающая JSON-ответ с данными:"""
+    file_sett = ROOT_DIR + "\\data\\user_settings.json"
+    print(file_sett)
+    sett_list = read_sett(file_sett)
+    list_curr = (sett_list[0]["user_currencies"])
+    list_stocks = (sett_list[0]["user_stocks"])
+
     excel_data = read_trans_excel(ROOT_DIR + "\\data\\operations2.xlsx")
     all_card_numbers = []
 
@@ -157,37 +161,18 @@ def main_web(date_input: str, period_d="ALL"):
         # создать Json
     str_main = json.dumps(trans_list_end, ensure_ascii=False, indent=2)
     str_top = json.dumps(list_top_transaction, ensure_ascii=False, indent=2)
-    json_string = {"json_top": list_top_transaction, "json_main": trans_list_end }
-    return (json_string)
 
-file_sett= ROOT_DIR + "\\data\\user_settings.json"
-print(file_sett)
-sett_list = read_sett(file_sett)
-list_curr = (sett_list[0]["user_currencies"])
-list_stocks = (sett_list[0]["user_stocks"])
-# print(list_curr,list_stocks)
+    time_now = datetime.datetime.now()
+    greeting_val_g = str_greeting(time_now)
 
-rez_main = main_web("2021-09-27 20:56:30", period_d="ALL")
-rez_main_j = rez_main["json_main"]
-rez_top_j = rez_main["json_top"]
-
-rez_curr = curr_rate(list_curr)
-rez_sp500 = json.dumps(sp500(list_stocks) , ensure_ascii=False, indent=2)
-
-time_now = datetime.datetime.now()
-time_now = datetime.datetime(2025, 5, 9, 2, 0, 0)
-greeting_val_g = str_greeting(time_now)
-
-list_out = [{"greting": greeting_val_g}]
-list_out_tmp = {"cards": rez_main_j}
-list_out.append(list_out_tmp)
-list_out_tmp = {"top_transaction": rez_top_j}
-list_out.append(list_out_tmp)
-list_out_tmp = {"currency_rates": rez_curr}
-list_out.append(list_out_tmp)
-list_out_tmp = {"stock_prices": rez_sp500}
-json_out = json.dumps( list_out, ensure_ascii=False, indent=2)
-
-
-rez_out = json.dumps(list_out , ensure_ascii=False, indent=2)
-print("out",rez_out)
+    list_out = [{"greting": greeting_val_g}]
+    list_out_tmp = {"cards": trans_list_end}
+    list_out.append(list_out_tmp)
+    list_out_tmp = {"top_transaction": list_top_transaction}
+    list_out.append(list_out_tmp)
+    list_out_tmp = {"currency_rates": list_curr}
+    list_out.append(list_out_tmp)
+    list_out_tmp = sp500(list_stocks)
+    list_out.append(list_out_tmp)
+    json_out = json.dumps(list_out, ensure_ascii=False, indent=2)
+    return (json_out)
