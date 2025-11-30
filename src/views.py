@@ -166,8 +166,6 @@ def main_web(date_input: str, period_d="ALL"):
     json_out = json.dumps(val_out, ensure_ascii=False, indent=2)
 
     return (json_out)
-    # """
-    # """
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

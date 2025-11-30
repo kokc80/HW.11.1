@@ -1,4 +1,6 @@
 import pytest
+import re
+import unittest
 
 from src.processing import filter_by_state, sort_by_date, process_bank_operations, process_bank_search
 
@@ -163,3 +165,53 @@ def test_process_bank_search():
         "description": "Открытие вклада",
         "to": "Счет 41421565395219882431"
     }]
+
+
+import unittest
+from src.processing import process_bank_search
+
+
+# Тест на неверный тип списка
+def test_invalid_list_input():
+    try:
+        process_bank_search("не_список", "поиск")
+        assert False, "Должен был вызвать исключение"
+    except TypeError:
+        pass
+
+
+def test_invalid_list_input_2():
+    try:
+        process_bank_search(123, "поиск")
+        assert False, "Должен был вызвать исключение"
+    except TypeError:
+        pass
+
+
+# Тест на элементы списка, которые не являются словарями
+def test_invalid_dict_elements():
+    try:
+        process_bank_search([1, 2, 3], "поиск")
+        assert False, "Должен был вызвать исключение"
+    except TypeError:
+        pass
+
+
+# Тест на некорректную строку поиска
+def test_invalid_search_string():
+    data = [{"description": "пример описания"}]
+
+    # Проверка пустой строки (должна работать)
+    result = process_bank_search(data, "")
+    assert result == data
+
+    # Проверка некорректного регулярного выражения
+    try:
+        process_bank_search(data, "(")
+        assert False, "Должен был вызвать исключение re.error"
+    except re.error:
+        pass
+
+
+if __name__ == '__main__':
+    unittest.main()

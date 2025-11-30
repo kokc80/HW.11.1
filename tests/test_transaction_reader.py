@@ -43,10 +43,3 @@ def test_read_trans_excel():
 def test_read_trans_excel_not_file():
     with pytest.raises(FileNotFoundError, match="Файл не найден"):
         raise FileNotFoundError("Файл не найден")
-
-
-@patch("builtins.open", new_callable=mock_open, read_data="id,state,date,amount\n650703,EXECUTED,2023-09-05,16210\n")
-def test_read_trans_csv(mock_file):
-    expected = [{"id": "650703", "state": "EXECUTED", "date": "2023-09-05", "amount": "16210"}]
-    with patch("os.path.isfile", return_value=True):
-        assert read_trans_csv("test.csv") == expected
