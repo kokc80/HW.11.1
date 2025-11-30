@@ -33,7 +33,7 @@ file_name = ROOT_DIR + "\\data\\operations1.xlsx"
 data_list = read_trans_excel(file_name)
 
 df1 = pd.DataFrame(data_list)
-df1["Дата операции"] = pd.to_datetime(df1["Дата операции"])
+df1["Дата операции"] = pd.to_datetime(df1["Дата операции"], dayfirst=True)
 
 simplesearch_out = spending_by_category(df1, "Связь","2018-01-30 23:00:01")
 # out_list = simplesearch_out.to_dict("records")
