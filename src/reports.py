@@ -7,17 +7,24 @@ from dateutil.relativedelta import relativedelta
 
 from src.transaction_reader import read_trans_excel
 
-
-def spending_by_category(df: pd.DataFrame, category: str, date: str | None = None) -> pd.DataFrame:
-    """Функция возвращает траты по заданной категории за последние три месяца (от переданной даты)."""
-    # time_now = datetime.datetime.now()
-    time_now = datetime.datetime.strptime("2021-12-31 23:00:01", "%Y-%m-%d %H:%M:%S")
-    if date is None:
+def searching_date(d1: str | None = None):
+    """Функция для перевода строки в datetime
+    возвращает словарь из {даты начала} и {даты окончания} = {дата начала} - 3 месяца"""
+    if d1 is None:
         date_ex2 = time_now
         date_ex1 = date_ex2 - relativedelta(months=3)
     else:
-        date_ex2 = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        date_ex2 = datetime.datetime.strptime(d1, "%Y-%m-%d %H:%M:%S")
         date_ex1 = date_ex2 - relativedelta(months=3)
+    return {"Дата начала": date_ex1, "Дата окончания": date_ex2}
+
+
+def spending_by_category(df: pd.DataFrame, category: str, date_f: str | None = None) -> pd.DataFrame:
+    """Функция возвращает траты по заданной категории за последние три месяца (от переданной даты)."""
+    # time_now = datetime.datetime.now()
+    dates = searching_date(date_f)
+    date_ex1 = dates["Дата начала"]
+    date_ex2 = dates["Дата окончания"]
     # отсортировать по дате
     df["Дата операции"] = pd.to_datetime(df["Дата операции"], dayfirst=True)
     filtered_df = df[((df['Дата операции'] >= date_ex1) & (df['Дата операции'] <= date_ex2))]
@@ -36,3 +43,4 @@ data_list = read_trans_excel(file_name)
 
 df1 = pd.DataFrame(data_list)
 df1["Дата операции"] = pd.to_datetime(df1["Дата операции"], dayfirst=True)
+print("datafr\n\n",spending_by_category(df1, "Связь", "2018-01-30 23:00:01"))

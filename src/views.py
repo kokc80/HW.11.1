@@ -31,6 +31,7 @@ def str_greeting() -> str:
 
 
 def unique_card_list(tr_data: list[dict], unique_col) -> list:
+    """Функция возвращает уникальные номера карт в списке"""
     unique_list = []
     # print(tr_data)
     for item in tr_data:
