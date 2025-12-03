@@ -1,6 +1,7 @@
+from datetime import datetime
 from unittest import TestCase
 from unittest.mock import patch
-from datetime import datetime
+
 from src.views import read_sett, str_greeting
 
 

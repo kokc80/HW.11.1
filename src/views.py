@@ -1,10 +1,12 @@
 import datetime
 import json
 import math
-import requests
 from pathlib import Path
-from src.utils import read_json
+
+import requests
+
 from src.transaction_reader import read_trans_excel
+from src.utils import read_json
 
 
 def read_sett(filename: str) -> list[dict]:

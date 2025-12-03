@@ -1,8 +1,9 @@
-import pytest
 import re
 import unittest
 
-from src.processing import filter_by_state, sort_by_date, process_bank_operations, process_bank_search
+import pytest
+
+from src.processing import filter_by_state, process_bank_operations, process_bank_search, sort_by_date
 
 
 @pytest.fixture
@@ -168,6 +169,7 @@ def test_process_bank_search():
 
 
 import unittest
+
 from src.processing import process_bank_search
 
 
